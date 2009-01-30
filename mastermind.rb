@@ -1,9 +1,13 @@
 class Mastermind
   def initialize(game)
+    @game = game
   end
   def try(game)
+    if game == @game then
+      @solved = true
+    end
   end
   def solved?
-    true
+    @solved
   end
 end
