@@ -12,6 +12,9 @@ describe Mastermind do
     @mastermind.try [1,2,3,5]
     @mastermind.should_not be_solved
   end
-  it "should indicate when a correct peg is placed"
+  it "should indicate when a correct peg is placed" do
+    @mastermind.try [1,5,6,7]
+    @mastermind.correct_pegs.should == 1
+  end
   it "should indicate when a correct color is placed"
 end

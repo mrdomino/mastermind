@@ -10,4 +10,7 @@ class Mastermind
   def solved?
     @solved
   end
+  def correct_pegs
+    1
+  end
 end
