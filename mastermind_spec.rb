@@ -2,26 +2,65 @@ require 'mastermind'
 
 describe Mastermind do
 
+  before do
+    @mastermind = Mastermind.new
+  end
+
   describe "color selection" do
-    it "should allow specification of the number of colors"
-    it "should default to 6 colors"
+    it "should allow specification of the number of colors" do
+      [1,2].each do|x|
+        @mastermind.colors = x
+        @mastermind.colors.should == x
+      end
+    end
+    it "should default to 6 colors" do
+      @mastermind.colors.should == 6
+    end
     it "should accept valid color choices"
     it "should reject invalid color choices"
   end
 
   describe "puzzle generation" do
-    it "should allow specification of the number of pegs in a row"
-    it "should default to 4 pegs per row"
-    it "should allow specification of the number of guesses"
-    it "should default to 10 guesses"
+    it "should allow specification of the number of pegs in a row" do
+      [2,3].each do |x|
+        @mastermind.pegs = x
+        @mastermind.pegs.should == x
+      end
+    end
+    it "should default to 4 pegs per row" do
+      @mastermind.pegs.should == 4
+    end
+    it "should allow specification of the number of guesses" do
+      [2,3].each do |x|
+        @mastermind.guesses = x
+        @mastermind.guesses.should == x
+      end
+    end
+    it "should default to 10 guesses" do
+      @mastermind.guesses.should == 10
+    end
+
+    it "should generate a puzzle with the given parameters" do
+      @mastermind.puzzle.size.should == 4
+      @mastermind.puzzle.each do |x|
+        x.should be_between 1, @mastermind.colors
+      end
+      @mastermind.pegs = 5
+      @mastermind.puzzle.size.should == 5
+    end
 
     # Lacking the space or drive to implement tests of true randomness
     # (e.g., P(puzzle|past puzzles)=P(puzzle)), we elect that for our
     # purposes puzzles are "random enough" if we don't get the same
     # puzzle multiple times in a row. Psychologists use p < 0.05; this
-    # is probably fine. And incidentally means that this test will fail
-    # about 1 in 20 times.
-    it "should generate random puzzles"
+    # is probably fine. With default settings, there are 6^4 possible
+    # Mastermind puzzles; this, being considerably more than 20, means
+    # we can just run the test twice.
+    it "should generate random puzzles" do
+      p1 = Mastermind.new
+      p2 = Mastermind.new
+      p1.puzzle.should_not == p2.puzzle
+    end
   end
 
   describe "guessing" do
