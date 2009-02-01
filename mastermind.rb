@@ -3,8 +3,7 @@ class Mastermind
     def attr_of_puzzle(*args)
       args.each do |s|
         a = s.to_s
-        class_eval "def #{a}; @#{a}; end;
-                    def set_#{a}!(v); @#{a} = v; gen_puzzle!; end"
+        class_eval "def #{a}; @#{a}; end"
       end
     end
   end
