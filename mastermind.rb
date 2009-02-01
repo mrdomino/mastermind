@@ -10,6 +10,9 @@ class Mastermind
   end
 
   def guess!(p)
+    if self.solved? then
+      raise "This puzzle has already been solved. You can stop guessing now!"
+    end
     @solved = p == self.puzzle
   end
 
