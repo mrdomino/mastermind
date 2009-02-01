@@ -83,7 +83,10 @@ describe Mastermind do
       trytosolve.call
       trytosolve.should raise_error
     end
-    it "should not accept more than the maximum number of guesses"
+    it "should not accept more than the maximum number of guesses" do
+      10.times { @mastermind.guess! [1,2,3,4] }
+      lambda { @mastermind.guess! [1,2,3,4] }.should raise_error
+    end
 
     describe "hints", :shared => true do
       it "should show 0 pegs if none are right"
