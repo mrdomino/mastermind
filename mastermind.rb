@@ -14,10 +14,7 @@ class Mastermind
     @colors = (args[:colors] or 6)
     @pegs = (args[:pegs] or 4)
     @guesses = (args[:guesses] or 10)
-    self.gen_puzzle!
-  end
-
-  def gen_puzzle!
     @puzzle = Array.new(self.pegs) { rand(self.colors) + 1 }
   end
+
 end
