@@ -9,11 +9,22 @@ describe Mastermind do
     it "should reject invalid color choices"
   end
 
-  describe "guessing" do
+  describe "puzzle generation" do
     it "should allow specification of the number of pegs in a row"
     it "should default to 4 pegs per row"
     it "should allow specification of the number of guesses"
     it "should default to 10 guesses"
+
+    # Lacking the space or drive to implement tests of true randomness
+    # (e.g., P(puzzle|past puzzles)=P(puzzle)), we elect that for our
+    # purposes puzzles are "random enough" if we don't get the same
+    # puzzle multiple times in a row. Psychologists use p < 0.05; this
+    # is probably fine. And incidentally means that this test will fail
+    # about 1 in 20 times.
+    it "should generate random puzzles"
+  end
+
+  describe "guessing" do
     it "should accept valid solutions"
     it "should not accept invalid solutions"
 
