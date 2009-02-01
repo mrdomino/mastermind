@@ -1,14 +1,6 @@
 class Mastermind
-  class << self
-    def attr_of_puzzle(*args)
-      args.each do |s|
-        a = s.to_s
-        class_eval "def #{a}; @#{a}; end"
-      end
-    end
-  end
   attr_reader :puzzle
-  attr_of_puzzle :colors, :pegs, :guesses
+  attr_reader :colors, :pegs, :guesses
 
   def initialize(args = {})
     @colors = (args[:colors] or 6)
