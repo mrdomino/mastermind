@@ -68,7 +68,9 @@ describe Mastermind do
   end
 
   describe "guessing" do
-    it "should accept valid solutions"
+    it "should accept valid solutions" do
+      @mastermind.guess(@mastermind.puzzle.dup).should == true
+    end
     it "should not accept invalid solutions"
 
     describe "hints", :shared => true do
