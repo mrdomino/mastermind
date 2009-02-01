@@ -9,8 +9,8 @@ describe Mastermind do
   describe "color selection" do
     it "should allow specification of the number of colors" do
       [1,2].each do|x|
-        @mastermind.colors = x
-        @mastermind.colors.should == x
+        foo = Mastermind.new(:colors => x)
+        foo.colors.should == x
       end
     end
     it "should default to 6 colors" do
@@ -23,8 +23,8 @@ describe Mastermind do
   describe "puzzle generation" do
     it "should allow specification of the number of pegs in a row" do
       [2,3].each do |x|
-        @mastermind.pegs = x
-        @mastermind.pegs.should == x
+        foo = Mastermind.new(:pegs => x)
+        foo.pegs.should == x
       end
     end
     it "should default to 4 pegs per row" do
@@ -32,8 +32,8 @@ describe Mastermind do
     end
     it "should allow specification of the number of guesses" do
       [2,3].each do |x|
-        @mastermind.guesses = x
-        @mastermind.guesses.should == x
+        foo = Mastermind.new(:guesses => x)
+        foo.guesses.should == x
       end
     end
     it "should default to 10 guesses" do
@@ -45,8 +45,8 @@ describe Mastermind do
       @mastermind.puzzle.each do |x|
         x.should be_between 1, @mastermind.colors
       end
-      @mastermind.pegs = 5
-      @mastermind.puzzle.size.should == 5
+      foo = Mastermind.new(:pegs => 5)
+      foo.puzzle.size.should == 5
     end
 
     # Lacking the space or drive to implement tests of true randomness
