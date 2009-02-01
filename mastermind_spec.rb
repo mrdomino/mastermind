@@ -96,15 +96,37 @@ describe Mastermind do
     end
 
     describe "hints", :shared => true do
-      it "should show 0 pegs if none are right"
-      it "should show n pegs if n are right"
+      before do
+        @testp = Mastermind.new :puzzle => [1,2,3,4]
+        @hintfunc = @um_hintfunc.bind(@testp)
+      end
+      it "should show 0 pegs if none are right" do
+        @testp.guess! @none_soln
+        @hintfunc.call.should == 0
+      end
+      it "should show n pegs if n are right" do
+        @testp.guess! @n_soln
+        @hintfunc.call.should == @n
+      end
     end
 
     describe "(with correctly-colored pegs in the right place)" do
+      before do
+        @none_soln = [4,3,2,1]
+        @n_soln = [1,2,5,6]
+        @n = 2
+        @um_hintfunc = Mastermind.instance_method(:pegs_correct)
+      end
       it_should_behave_like "hints"
     end
 
     describe "(with correctly-colored pegs in the wrong place)" do
+      before do
+        @none_soln = [5,6,5,6]
+        @n_soln = [4,3,2,1]
+        @n = 4
+        @um_hintfunc = Mastermind.instance_method(:colors_correct)
+      end
       it_should_behave_like "hints"
     end
   end

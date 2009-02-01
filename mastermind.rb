@@ -9,6 +9,7 @@ class Mastermind
     @puzzle = args[:puzzle] || Array.new(self.pegs) { rand(self.colors) + 1 }
 
     @guesses_made = 0
+    @last = []
   end
 
   def guess!(p)
@@ -19,6 +20,7 @@ class Mastermind
       raise "You haven't solved this puzzle. Better luck next time!"
     end
     self.validate p
+    @last = p
     @solved = p == self.puzzle
     @guesses_made += 1
   end
@@ -32,5 +34,16 @@ class Mastermind
 
   def solved?
     @solved
+  end
+
+  def pegs_correct
+    return puzzle.zip(@last).inject(0) do |acc,i|
+      acc = acc + 1 if i.reduce(:==)
+      acc
+    end
+  end
+
+  def colors_correct
+    0
   end
 end
