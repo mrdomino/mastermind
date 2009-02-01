@@ -10,6 +10,10 @@ class Mastermind
   end
 
   def guess(p)
-    true
+    @solved = p == self.puzzle
+  end
+
+  def solved?
+    @solved
   end
 end

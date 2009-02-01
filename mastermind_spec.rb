@@ -69,9 +69,17 @@ describe Mastermind do
 
   describe "guessing" do
     it "should accept valid solutions" do
-      @mastermind.guess(@mastermind.puzzle.dup).should == true
+      @mastermind.guess(@mastermind.puzzle.dup)
+      @mastermind.should be_solved
     end
-    it "should not accept invalid solutions"
+    it "should not accept invalid solutions" do
+      foo = Mastermind.new :puzzle => [1,2,3,4]
+      foo.guess [5,6,7,8]
+      foo.should_not be_solved
+    end
+
+    it "should not accept anything else after a valid solution"
+    it "should not accept more than the maximum number of guesses"
 
     describe "hints", :shared => true do
       it "should show 0 pegs if none are right"
