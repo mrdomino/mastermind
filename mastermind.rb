@@ -44,6 +44,13 @@ class Mastermind
   end
 
   def colors_correct
-    0
+    t1 = Array.new(colors,0)
+    t2 = Array.new(colors,0)
+    puzzle.each {|i| t1[i-1] += 1 }
+    @last.each {|i| t2[i-1] += 1 }
+    a = t1.zip(t2).inject(0) do |acc,x|
+      acc = acc + 1 if x.all? {|z| z > 0}
+      acc
+    end
   end
 end
