@@ -18,8 +18,16 @@ class Mastermind
     if @guesses_made == @guesses then
       raise "You haven't solved this puzzle. Better luck next time!"
     end
+    self.validate p
     @solved = p == self.puzzle
     @guesses_made += 1
+  end
+
+  def validate(p)
+    p.size == self.pegs or raise "Solutions should be of size #{self.pegs}; received solution of size #{p.size}"
+    p.each do |i|
+      i.between? 1, self.colors or raise "#{i} is out of bounds; should be in [1,#{self.colors}]"
+    end
   end
 
   def solved?

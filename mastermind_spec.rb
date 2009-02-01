@@ -16,8 +16,15 @@ describe Mastermind do
     it "should default to 6 colors" do
       @mastermind.colors.should == 6
     end
-    it "should accept valid color choices"
-    it "should reject invalid color choices"
+    it "should accept valid color choices" do
+      lambda { @mastermind.guess! [3,3,3,3] }.should_not raise_error
+    end
+    it "should reject invalid color choices" do
+      lambda { @mastermind.guess! Array.new 4, (-1) }.should raise_error
+      lambda {
+        @mastermind.guess! Array.new 4, @mastermind.colors + 1
+      }.should raise_error
+    end
   end
 
   describe "puzzle generation" do
@@ -74,7 +81,7 @@ describe Mastermind do
     end
     it "should not accept invalid solutions" do
       foo = Mastermind.new :puzzle => [1,2,3,4]
-      foo.guess! [5,6,7,8]
+      foo.guess! [5,6,5,6]
       foo.should_not be_solved
     end
 
