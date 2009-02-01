@@ -61,6 +61,10 @@ describe Mastermind do
       p2 = Mastermind.new
       p1.puzzle.should_not == p2.puzzle
     end
+
+    it "should return the same puzzle consistently" do
+      @mastermind.puzzle.should == @mastermind.puzzle
+    end
   end
 
   describe "guessing" do
