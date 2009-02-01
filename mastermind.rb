@@ -9,7 +9,7 @@ class Mastermind
     @puzzle = (args[:puzzle] or Array.new(self.pegs) { rand(self.colors) + 1 })
   end
 
-  def guess(p)
+  def guess!(p)
     @solved = p == self.puzzle
   end
 
