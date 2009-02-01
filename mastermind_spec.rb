@@ -56,13 +56,9 @@ describe Mastermind do
       foo.puzzle.size.should == 5
     end
 
-    # Lacking the space or drive to implement tests of true randomness
-    # (e.g., P(puzzle|past puzzles)=P(puzzle)), we elect that for our
-    # purposes puzzles are "random enough" if we don't get the same
-    # puzzle multiple times in a row. Psychologists use p < 0.05; this
-    # is probably fine. With default settings, there are 6^4 possible
-    # Mastermind puzzles; this, being considerably more than 20, means
-    # we can just run the test twice.
+    # With default settings, there are 6^4 possible Mastermind puzzles;
+    # that means that this test will fail erroneously about .08% of the
+    # time.
     it "should generate random puzzles" do
       p1 = Mastermind.new
       p2 = Mastermind.new
