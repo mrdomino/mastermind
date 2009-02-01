@@ -126,4 +126,9 @@ describe Mastermind do
       it_should_behave_like "hints"
     end
   end
+
+  describe "old guesses" do
+    it "should give access to old guesses"
+    it "should provide hints for old guesses"
+  end
 end
