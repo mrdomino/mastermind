@@ -55,7 +55,12 @@ Shoes.app :title => "Mastermind", :height => (csz+10)*($game.guesses+1), :width 
         $game.guesses.times do |i|
           guess_box i
         end
-        para "hi"
+        boxwidth = csz*($game.pegs)
+        image boxwidth,csz do
+          fill rgb(200,200,200)
+          nostroke
+          rect :top => 0, :left => 0, :curve => 5, :width => boxwidth, :height => csz
+        end
       end
     end
 
