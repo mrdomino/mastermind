@@ -37,8 +37,8 @@ class MastermindGUI < Shoes
   def index
     background rgb(225,225,225)..white
     stack do
-      title "Mastermind", :underline => 'single'
-      para sub("by ", em("Steven Dee")), :align => "right"
+      title "Mastermind", :underline => 'single', :align => "center"
+      para sub(em "version ", Mastermind::VERSION, " by ", "Steven Dee"), :align => "right"
 
       para 'Begin a new game:'
       [[:easy , [6,4,10]],
