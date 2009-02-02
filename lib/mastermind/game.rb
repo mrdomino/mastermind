@@ -66,6 +66,10 @@ class Game
     [pegs_correct(n),colors_correct(n)]
   end
 
+  def guesses_made
+    @guess.size
+  end
+
 end
 
 end

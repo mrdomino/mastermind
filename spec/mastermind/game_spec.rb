@@ -157,5 +157,8 @@ describe Mastermind::Game do
       @mastermind.guess! [1,2,3,4]
       @mastermind.guess.should == @mastermind.guess(-1)
     end
+    it "should tell how many guesses have been made" do
+      @mastermind.guesses_made.should == 0
+    end
   end
 end
