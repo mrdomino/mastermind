@@ -56,7 +56,7 @@ class Mastermind
     end
   end
 
-  def guess(n)
+  def guess(n=-1)
     @guess[n]
   end
 

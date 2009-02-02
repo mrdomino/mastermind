@@ -146,5 +146,14 @@ describe Mastermind do
       foo.hints(0).should == [1,1]
       foo.hints(1).should == [0,0]
     end
+    it "should behave like array indices" do
+      @mastermind.guess! [1,2,3,4]
+      @mastermind.guess(-1).should == [1,2,3,4]
+      @mastermind.hints(-1).should == @mastermind.hints
+    end
+    it "should default to the last element" do
+      @mastermind.guess! [1,2,3,4]
+      @mastermind.guess.should == @mastermind.guess(-1)
+    end
   end
 end
