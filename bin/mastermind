@@ -3,3 +3,61 @@
 $: << File.join(File.dirname(__FILE__), %w(.. lib))
 
 require 'mastermind'
+
+$color_diameter = 50
+$color_padding = 5
+
+def csz
+  $color_diameter + ($color_padding * 2)
+end
+
+def cpad
+  csz + 20
+end
+
+$game = Mastermind::Game.new
+
+Shoes.app :title => "Mastermind", :height => (csz+10)*($game.guesses+1), :width => cpad + (csz*($game.pegs) + csz/4*$game.pegs) + 10 do
+
+  @colors = Mastermind::Colors.colors($game.colors)
+
+  background rgb(225,225,225)..white
+
+  def guess_box(i)
+    flow do
+      $game.pegs.times do
+        image csz,csz do
+          nostroke
+          fill rgb(200,200,200)
+          oval($color_padding,$color_padding,$color_diameter)
+        end
+      end
+      flow :width => csz/4*$game.pegs, :height => csz + 10 do
+        $game.pegs.times do
+          image csz/2, csz/2 do
+            fill rgb(200,200,200)
+            nostroke
+            oval(4,4,(csz/2)-8)
+          end
+        end
+      end
+    end
+  end
+
+  flow do
+    @color_panel = stack :width => csz+20, :height => 80*@colors.size do
+      @colors.each do |c|
+        image(csz,csz){ fill c; oval($color_padding,$color_padding,$color_diameter) }
+      end
+    end
+    @game_board = stack :width => -(csz+20) do
+      @guesses = stack do
+        $game.guesses.times do |i|
+          guess_box i
+        end
+        para "hi"
+      end
+    end
+
+  end
+end
