@@ -93,34 +93,39 @@ describe Mastermind do
 
     describe "hints", :shared => true do
       before do
-        @testp = Mastermind.new :puzzle => [1,2,3,4]
-        @hintfunc = @um_hintfunc.bind(@testp)
-      end
-      it "should show 0 pegs if none are right" do
-        @testp.guess! @none_soln
-        @hintfunc.call.should == 0
       end
       it "should show n pegs if n are right" do
-        @testp.guess! @n_soln
-        @hintfunc.call.should == @n
+        @puzzles.each do |p|
+          m = Mastermind.new :puzzle => p[:puzzle]
+          hints = @um_hintfunc.bind(m)
+          m.guess! p[:guess]
+          hints.call.should == p[:n]
+        end
       end
     end
 
-    describe "(with correctly-colored pegs in the right place)" do
+    describe "hints (in general)" do
+      it "should give hints in array format" do
+        foo = Mastermind.new :puzzle => [1,2,3,4]
+        foo.guess! [1,2,4,6]
+        foo.hints.should == [foo.pegs_correct, foo.colors_correct]
+      end
+    end
+
+    describe "hints (with correctly-colored pegs in the right place)" do
       before do
-        @none_soln = [4,3,2,1]
-        @n_soln = [1,2,5,6]
-        @n = 2
+        @puzzles = [{:n => 0, :puzzle => [1,2,3,4], :guess => [4,3,2,1]},
+                    {:n => 2, :puzzle => [1,2,3,4], :guess => [1,2,5,6]}]
         @um_hintfunc = Mastermind.instance_method(:pegs_correct)
       end
       it_should_behave_like "hints"
     end
 
-    describe "(with correctly-colored pegs in the wrong place)" do
+    describe "hints (with correctly-colored pegs in the wrong place)" do
       before do
-        @none_soln = [5,6,5,6]
-        @n_soln = [4,3,2,1]
-        @n = 4
+        @puzzles = [{:n => 0, :puzzle => [1,2,3,4], :guess => [5,6,5,6]},
+                    {:n => 1, :puzzle => [1,2,3,4], :guess => [1,4,6,5]},
+                    {:n => 0, :puzzle => [2,2,2,1], :guess => [2,2,2,2]}]
         @um_hintfunc = Mastermind.instance_method(:colors_correct)
       end
       it_should_behave_like "hints"
@@ -128,7 +133,18 @@ describe Mastermind do
   end
 
   describe "old guesses" do
-    it "should give access to old guesses"
-    it "should provide hints for old guesses"
+    it "should give access to old guesses" do
+      @mastermind.guess! [1,2,3,4]
+      @mastermind.guess! [5,6,1,2]
+      @mastermind.guess(0).should == [1,2,3,4]
+      @mastermind.guess(1).should == [5,6,1,2]
+    end
+    it "should provide hints for old guesses" do
+      foo = Mastermind.new :puzzle => [1,2,3,4]
+      foo.guess! [1,4,6,5]
+      foo.guess! [5,6,5,6]
+      foo.hints(0).should == [1,1]
+      foo.hints(1).should == [0,0]
+    end
   end
 end

@@ -8,21 +8,19 @@ class Mastermind
     @guesses = args[:guesses] || 10
     @puzzle = args[:puzzle] || Array.new(pegs) { rand(colors) + 1 }
 
-    @guesses_made = 0
-    @last = []
+    @guess = []
   end
 
   def guess!(p)
     if self.solved? then
       raise "This puzzle has already been solved. You can stop guessing now!"
     end
-    if @guesses_made == @guesses then
+    if @guess.size == @guesses then
       raise "You haven't solved this puzzle. Better luck next time!"
     end
     validate p
-    @last = p
+    @guess << p
     @solved = p == puzzle
-    @guesses_made += 1
   end
 
   def validate(p)
@@ -36,21 +34,39 @@ class Mastermind
     @solved
   end
 
-  def pegs_correct
-    return puzzle.zip(@last).inject(0) do |acc,i|
+  def pegs_correct(n=-1)
+    return puzzle.zip(guess(n)).inject(0) do |acc,i|
       acc = acc + 1 if i.reduce(:==)
       acc
     end
   end
 
-  def colors_correct
+  def colors_correct(n=-1)
     t1 = Array.new(colors,0)
     t2 = Array.new(colors,0)
-    puzzle.each {|i| t1[i-1] += 1 }
-    @last.each {|i| t2[i-1] += 1 }
-    a = t1.zip(t2).inject(0) do |acc,x|
+    puzzle.zip(guess n).each do |i,j|
+      if i != j then
+        t1[i-1] += 1
+        t2[j-1] += 1
+      end
+    end
+    t1.zip(t2).inject(0) do |acc,x|
       acc = acc + 1 if x.all? {|z| z > 0}
       acc
     end
+  end
+
+  def guess(n)
+    @guess[n]
+  end
+
+  def hints(n=-1)
+    [pegs_correct(n),colors_correct(n)]
+  end
+
+private
+
+  def last
+    @guess[-1]
   end
 end
