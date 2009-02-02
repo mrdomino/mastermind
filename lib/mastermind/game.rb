@@ -11,6 +11,7 @@ class Game
     @puzzle = args[:puzzle] || Array.new(pegs) { rand(colors) + 1 }
 
     @guess = []
+    @hints = []
   end
 
   def guess!(p)
@@ -22,6 +23,7 @@ class Game
     end
     validate p
     @guess << p
+    @hints << [pegs_correct, colors_correct]
     @solved = p == puzzle
   end
 
@@ -37,7 +39,7 @@ class Game
   end
 
   def pegs_correct(n=-1)
-    return puzzle.zip(guess(n)).inject(0) do |acc,i|
+    return puzzle.zip(guess[n]).inject(0) do |acc,i|
       acc = acc + 1 if i.reduce(:==)
       acc
     end
@@ -46,7 +48,7 @@ class Game
   def colors_correct(n=-1)
     t1 = Array.new(colors,0)
     t2 = Array.new(colors,0)
-    puzzle.zip(guess n).each do |i,j|
+    puzzle.zip(guess[n]).each do |i,j|
       if i != j then
         t1[i-1] += 1
         t2[j-1] += 1
@@ -58,16 +60,12 @@ class Game
     end
   end
 
-  def guess(n=-1)
-    @guess[n]
+  def guess
+    @guess
   end
 
-  def hints(n=-1)
-    [pegs_correct(n),colors_correct(n)]
-  end
-
-  def guesses_made
-    @guess.size
+  def hints
+    @hints
   end
 
 end

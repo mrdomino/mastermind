@@ -110,7 +110,7 @@ describe Mastermind::Game do
       it "should give hints in array format" do
         foo = Mastermind::Game.new :puzzle => [1,2,3,4]
         foo.guess! [1,2,4,6]
-        foo.hints.should == [foo.pegs_correct, foo.colors_correct]
+        foo.hints[-1].should == [foo.pegs_correct, foo.colors_correct]
       end
     end
 
@@ -138,27 +138,15 @@ describe Mastermind::Game do
     it "should give access to old guesses" do
       @mastermind.guess! [1,2,3,4]
       @mastermind.guess! [5,6,1,2]
-      @mastermind.guess(0).should == [1,2,3,4]
-      @mastermind.guess(1).should == [5,6,1,2]
+      @mastermind.guess[0].should == [1,2,3,4]
+      @mastermind.guess[1].should == [5,6,1,2]
     end
     it "should provide hints for old guesses" do
       foo = Mastermind::Game.new :puzzle => [1,2,3,4]
       foo.guess! [1,4,6,5]
       foo.guess! [5,6,5,6]
-      foo.hints(0).should == [1,1]
-      foo.hints(1).should == [0,0]
-    end
-    it "should behave like array indices" do
-      @mastermind.guess! [1,2,3,4]
-      @mastermind.guess(-1).should == [1,2,3,4]
-      @mastermind.hints(-1).should == @mastermind.hints
-    end
-    it "should default to the last element" do
-      @mastermind.guess! [1,2,3,4]
-      @mastermind.guess.should == @mastermind.guess(-1)
-    end
-    it "should tell how many guesses have been made" do
-      @mastermind.guesses_made.should == 0
+      foo.hints[0].should == [1,1]
+      foo.hints[1].should == [0,0]
     end
   end
 end
