@@ -182,7 +182,7 @@ class MastermindGUI < Shoes
           (@game.guess.zip @game.hints).each do |g,h|
             render_guess g, h
           end
-          pending_guess unless @game.guess.size == @game.guesses or @game.solved?
+          pending_guess unless @game.lost? or @game.solved?
           (@game.guesses - @game.guess.size - 1).times { empty_guess }
           empty_guess if @game.solved?
         end
@@ -197,8 +197,8 @@ class MastermindGUI < Shoes
           rect :top => 0, :left => 0, :curve => 5,
                :width => width, :height => height
           stroke black
-          if @game.solved? then
-            render_guess @game.guess[-1]
+          if @game.solved? or @game.lost? then
+            render_guess @game.puzzle
           end
         end
       end

@@ -92,6 +92,20 @@ describe Mastermind::Game do
       10.times { @mastermind.guess! [1,2,3,4] }
       lambda { @mastermind.guess! [1,2,3,4] }.should raise_error
     end
+    it "should tell when the game is lost" do
+      10.times { @mastermind.guess! [1,2,3,4] }
+      @mastermind.should be_lost
+      @mastermind.should_not be_solved
+    end
+    # an optimistic test
+    it "should not tell when the game is not lost" do
+      @mastermind.should_not be_lost
+    end
+    it "should not be lost when it is solved" do
+      9.times { @mastermind.guess! [1,2,3,4] }
+      @mastermind.guess! @mastermind.puzzle
+      @mastermind.should_not be_lost
+    end
 
     describe "hints", :shared => true do
       before do

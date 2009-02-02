@@ -60,6 +60,10 @@ class Game
     end
   end
 
+  def lost?
+    guess.size == guesses and not solved?
+  end
+
   def guess
     @guess
   end
