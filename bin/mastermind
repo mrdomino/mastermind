@@ -17,23 +17,103 @@ end
 
 $game = Mastermind::Game.new
 
-Shoes.app :title => "Mastermind", :height => (csz+10)*($game.guesses+1), :width => cpad + (csz*($game.pegs) + csz/4*$game.pegs) + 10 do
+p $game.puzzle
+
+25.times { puts }
+puts "If you want to see the solution (YOU PEEKING JERK), then scroll up."
+
+$active_color = 0
+$guess = Array.new $game.pegs, 0
+
+Shoes.app :title => "Mastermind", :height => (csz+10)*($game.guesses+1), :width => cpad + (csz*($game.pegs) + csz/4*($game.pegs+1)) + 10, :resizable => false do
 
   @colors = Mastermind::Colors.colors($game.colors)
 
   background rgb(225,225,225)..white
 
+  def pending
+    @pending.clear do
+      $game.pegs.times do |i|
+        x = image csz, csz do
+          if $guess[i] == 0 then
+            fill gray
+          else
+            fill @colors[$guess[i]-1]
+          end
+          oval($color_padding,$color_padding,$color_diameter)
+        end
+        x.click do
+          $guess[i] = $active_color
+          if $guess.all? &:nonzero? then
+            begin
+              $game.guess! $guess
+            rescue RuntimeError => e
+              alert e
+            end
+            $guess = Array.new $game.pegs, 0
+            game_board
+          end
+          pending
+        end
+      end
+    end
+  end
+
   def guess_box(i)
+    if not $game.guess(i) then
+      if $game.guess(i-1) or i == 0 then
+        # here's the current active guess
+        @pending = flow
+        pending
+      else
+        # No-guesses.
+        flow do
+          $game.pegs.times do
+            image csz,csz do
+              nostroke
+              fill rgb(200,200,200)
+              oval($color_padding,$color_padding,$color_diameter)
+            end
+          end
+          flow :width => csz/4*($game.pegs+1), :height => csz + 10 do
+            $game.pegs.times do
+              image csz/2, csz/2 do
+                fill rgb(200,200,200)
+                nostroke
+                oval(4,4,(csz/2)-8)
+              end
+            end
+          end
+        end
+      end
+    else
+      render_guess($game.guess(i), $game.hints(i))
+    end
+  end
+
+  def render_guess(arr, hints)
     flow do
-      $game.pegs.times do
+      $game.pegs.times do |i|
         image csz,csz do
-          nostroke
-          fill rgb(200,200,200)
+          fill @colors[arr[i]-1]
           oval($color_padding,$color_padding,$color_diameter)
         end
       end
-      flow :width => csz/4*$game.pegs, :height => csz + 10 do
-        $game.pegs.times do
+      flow :width => csz/4*($game.pegs+1), :height => csz + 10 do
+        placed,colored = hints
+        placed.times do
+          image csz/2, csz/2 do
+            fill black
+            oval(4,4,(csz/2)-8)
+          end
+        end
+        colored.times do
+          image csz/2, csz/2 do
+            fill white
+            oval(4,4,(csz/2)-8)
+          end
+        end
+        ($game.pegs - (placed + colored)).times do
           image csz/2, csz/2 do
             fill rgb(200,200,200)
             nostroke
@@ -44,25 +124,52 @@ Shoes.app :title => "Mastermind", :height => (csz+10)*($game.guesses+1), :width 
     end
   end
 
-  flow do
-    @color_panel = stack :width => csz+20, :height => 80*@colors.size do
-      @colors.each do |c|
-        image(csz,csz){ fill c; oval($color_padding,$color_padding,$color_diameter) }
+  def render
+    @color_panel.clear do
+      style(:width => csz+20, :height => 80*@colors.size)
+      @colors.each_with_index do |c,i|
+        x = image(csz,csz) do
+          if i+1 == $active_color then
+            fill black
+            nostroke
+            rect($color_padding-2,$color_padding-2,$color_diameter+2, $color_diameter+2, 5)
+          end
+          fill c; oval($color_padding,$color_padding,$color_diameter)
+        end
+        x.click do
+          $active_color = i+1
+          render
+        end
       end
     end
-    @game_board = stack :width => -(csz+20) do
+  end
+  def game_board
+    @game_board.clear do
+      style(:width => -(csz+20))
       @guesses = stack do
         $game.guesses.times do |i|
           guess_box i
         end
-        boxwidth = csz*($game.pegs)
-        image boxwidth,csz do
-          fill rgb(200,200,200)
-          nostroke
-          rect :top => 0, :left => 0, :curve => 5, :width => boxwidth, :height => csz
+        if $game.solved?
+          guess_box $game.guesses_made - 1
+        else
+          boxwidth = csz*($game.pegs)
+          image boxwidth,csz do
+            fill rgb(200,200,200)
+            nostroke
+            rect :top => 0, :left => 0, :curve => 5, :width => boxwidth, :height => csz
+          end
         end
       end
     end
+  end
+
+  flow do
+    @color_panel = stack :width => csz+20
+    @game_board = stack :width => -(csz+20)
+
+    render
+    game_board
 
   end
 end
