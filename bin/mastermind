@@ -1,6 +1,7 @@
 #!/usr/bin/env shoes
 
-# vim:ft=ruby
+# vim: ft=ruby
+# -*- ruby -*-
 
 $: << File.join(File.dirname(__FILE__), %w(.. lib))
 
