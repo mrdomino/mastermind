@@ -10,7 +10,7 @@ our guess has. We repeat until we run out of guesses or win.
 
 Obviously, this program requires Shoes. Get it at <http://shoooes.net/>.
 If Shoes is on your path, you can even run it from the command line:
-  $ mastermind
+  $ bin/mastermind
 
 The latest version of this code can be found at
 <http://squire.case.edu/git/mastermind.git/>.
