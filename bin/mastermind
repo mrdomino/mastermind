@@ -43,7 +43,8 @@ class MastermindGUI < Shoes
       para 'Begin a new game:'
       [[:easy , [6,4,10]],
        [:medium , [8,5,12]],
-       [:difficult , [10,6,14]]].each do |d,p|
+       [:difficult , [10,6,14]],
+       [:trivial , [1,2,1]]].each do |d,p|
         para link(d.to_s.capitalize, :click => "/game/#{p.join("/")}"), :align => 'center'
       end
     end
