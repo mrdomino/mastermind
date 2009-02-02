@@ -66,11 +66,6 @@ class Game
     [pegs_correct(n),colors_correct(n)]
   end
 
-private
-
-  def last
-    @guess[-1]
-  end
 end
 
 end
