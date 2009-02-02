@@ -1,8 +1,8 @@
 module Mastermind
 
 class Game
-  attr_reader :puzzle
   attr_reader :colors, :pegs, :guesses
+  attr_reader :guess, :hints, :puzzle
 
   def initialize(args = {})
     @colors = args[:colors] || 6
@@ -62,14 +62,6 @@ class Game
 
   def lost?
     guess.size == guesses and not solved?
-  end
-
-  def guess
-    @guess
-  end
-
-  def hints
-    @hints
   end
 
 end
