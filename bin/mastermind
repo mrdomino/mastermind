@@ -61,6 +61,15 @@ class MastermindGUI < Shoes
       @colors = Mastermind::Colors.colors(colors)
       @active = -1
 
+      keypress do |k|
+        if k == "0" then v = 10
+        else v = k.to_i end
+        puts "received #{v}"
+        @active = v-1 if v.between? 0, @colors.size
+        puts "active is #{@active}"
+        do_color_panel
+      end
+
       @game = Mastermind::Game.new :colors => colors, :pegs => pegs, :guesses => guesses
 
       p @game.puzzle
