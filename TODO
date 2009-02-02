@@ -1,0 +1,4 @@
+- confirm guesses
+- spec the rest of the lib
+- refactor GUI into spec-able portions
+  - spec them
