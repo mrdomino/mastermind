@@ -1,4 +1,6 @@
-class Mastermind
+module Mastermind
+
+class Game
   attr_reader :puzzle
   attr_reader :colors, :pegs, :guesses
 
@@ -69,4 +71,6 @@ private
   def last
     @guess[-1]
   end
+end
+
 end

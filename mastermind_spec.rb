@@ -1,15 +1,15 @@
 require 'mastermind'
 
-describe Mastermind do
+describe Mastermind::Game do
 
   before do
-    @mastermind = Mastermind.new
+    @mastermind = Mastermind::Game.new
   end
 
   describe "color selection" do
     it "should allow specification of the number of colors" do
       [1,2].each do|x|
-        foo = Mastermind.new(:colors => x)
+        foo = Mastermind::Game.new(:colors => x)
         foo.colors.should == x
       end
     end
@@ -30,7 +30,7 @@ describe Mastermind do
   describe "puzzle generation" do
     it "should allow specification of the number of pegs in a row" do
       [2,3].each do |x|
-        foo = Mastermind.new(:pegs => x)
+        foo = Mastermind::Game.new(:pegs => x)
         foo.pegs.should == x
       end
     end
@@ -39,7 +39,7 @@ describe Mastermind do
     end
     it "should allow specification of the number of guesses" do
       [2,3].each do |x|
-        foo = Mastermind.new(:guesses => x)
+        foo = Mastermind::Game.new(:guesses => x)
         foo.guesses.should == x
       end
     end
@@ -52,7 +52,7 @@ describe Mastermind do
       @mastermind.puzzle.each do |x|
         x.should be_between 1, @mastermind.colors
       end
-      foo = Mastermind.new(:pegs => 5)
+      foo = Mastermind::Game.new(:pegs => 5)
       foo.puzzle.size.should == 5
     end
 
@@ -60,8 +60,8 @@ describe Mastermind do
     # that means that this test will fail erroneously about .08% of the
     # time.
     it "should generate random puzzles" do
-      p1 = Mastermind.new
-      p2 = Mastermind.new
+      p1 = Mastermind::Game.new
+      p2 = Mastermind::Game.new
       p1.puzzle.should_not == p2.puzzle
     end
 
@@ -76,7 +76,7 @@ describe Mastermind do
       @mastermind.should be_solved
     end
     it "should not accept invalid solutions" do
-      foo = Mastermind.new :puzzle => [1,2,3,4]
+      foo = Mastermind::Game.new :puzzle => [1,2,3,4]
       foo.guess! [5,6,5,6]
       foo.should_not be_solved
     end
@@ -96,7 +96,7 @@ describe Mastermind do
       end
       it "should show n pegs if n are right" do
         @puzzles.each do |p|
-          m = Mastermind.new :puzzle => p[:puzzle]
+          m = Mastermind::Game.new :puzzle => p[:puzzle]
           hints = @um_hintfunc.bind(m)
           m.guess! p[:guess]
           hints.call.should == p[:n]
@@ -106,7 +106,7 @@ describe Mastermind do
 
     describe "hints (in general)" do
       it "should give hints in array format" do
-        foo = Mastermind.new :puzzle => [1,2,3,4]
+        foo = Mastermind::Game.new :puzzle => [1,2,3,4]
         foo.guess! [1,2,4,6]
         foo.hints.should == [foo.pegs_correct, foo.colors_correct]
       end
@@ -116,7 +116,7 @@ describe Mastermind do
       before do
         @puzzles = [{:n => 0, :puzzle => [1,2,3,4], :guess => [4,3,2,1]},
                     {:n => 2, :puzzle => [1,2,3,4], :guess => [1,2,5,6]}]
-        @um_hintfunc = Mastermind.instance_method(:pegs_correct)
+        @um_hintfunc = Mastermind::Game.instance_method(:pegs_correct)
       end
       it_should_behave_like "hints"
     end
@@ -126,7 +126,7 @@ describe Mastermind do
         @puzzles = [{:n => 0, :puzzle => [1,2,3,4], :guess => [5,6,5,6]},
                     {:n => 1, :puzzle => [1,2,3,4], :guess => [1,4,6,5]},
                     {:n => 0, :puzzle => [2,2,2,1], :guess => [2,2,2,2]}]
-        @um_hintfunc = Mastermind.instance_method(:colors_correct)
+        @um_hintfunc = Mastermind::Game.instance_method(:colors_correct)
       end
       it_should_behave_like "hints"
     end
@@ -140,7 +140,7 @@ describe Mastermind do
       @mastermind.guess(1).should == [5,6,1,2]
     end
     it "should provide hints for old guesses" do
-      foo = Mastermind.new :puzzle => [1,2,3,4]
+      foo = Mastermind::Game.new :puzzle => [1,2,3,4]
       foo.guess! [1,4,6,5]
       foo.guess! [5,6,5,6]
       foo.hints(0).should == [1,1]
