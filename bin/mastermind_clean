@@ -6,7 +6,7 @@ require 'mastermind'
 
 module Mastermind::GUIConstants
   PEG_DIA = 40
-  PEG_PAD = 5
+  PEG_PAD = 6
   PEG_SIZE = PEG_DIA + (PEG_PAD*2)
   ELEM_PAD = 8
   CPAN_WIDTH = PEG_SIZE + (ELEM_PAD*2)
@@ -59,27 +59,47 @@ class MastermindGUI < Shoes
       @colors = Mastermind::Colors.colors(colors)
       @active = -1
 
+      @game = Mastermind::Game.new :colors => colors, :pegs => pegs, :guesses => guesses
+
+      p @game.puzzle
+      25.times { puts }
+      puts "Scroll up for solution."
+
+      @current = Array.new pegs, -1
+
       # Overall rendering.
       def render
         do_color_panel
         do_game_board
       end
 
-      def peg(c,args = {})
-        image(Mastermind::GUIConstants::PEG_SIZE,
-              Mastermind::GUIConstants::PEG_SIZE) do
-          if args[:active] then
+      def gen_peg(c,width,height,pad,dia,active,stroke)
+        image(width,height) do
+          if active then
             fill black
             nostroke
-            rect :width => Mastermind::GUIConstants::PEG_SIZE,
-                 :height => Mastermind::GUIConstants::PEG_SIZE,
-                 :curve => Mastermind::GUIConstants::PEG_PAD
+            rect :width => width, :height => height, :curve => pad
           end
-          fill c;
-          oval :radius => Mastermind::GUIConstants::PEG_DIA/2,
-               :top => Mastermind::GUIConstants::PEG_PAD,
-               :left => Mastermind::GUIConstants::PEG_PAD
+          fill c
+          nostroke if stroke == false
+          oval :radius => dia/2,
+               :top => pad,
+               :left => pad
         end
+      end
+
+      def mini_peg(c,args = {})
+        sz = Mastermind::GUIConstants::PEG_SIZE/2
+        gen_peg c, sz, sz, Mastermind::GUIConstants::PEG_PAD/2,
+            Mastermind::GUIConstants::PEG_DIA/2,
+            args[:active], args[:stroke]
+      end
+
+      def peg(c,args = {})
+        sz = Mastermind::GUIConstants::PEG_SIZE
+        gen_peg c, sz, sz, Mastermind::GUIConstants::PEG_PAD,
+            Mastermind::GUIConstants::PEG_DIA,
+            args[:active], args[:stroke]
       end
 
       def do_color_panel
@@ -94,9 +114,102 @@ class MastermindGUI < Shoes
         end
       end
 
+      def update_pending
+        @pending.clear do
+          border red, :strokewidth => 3
+          @game.pegs.times do |i|
+            x = case @current[i]
+                when -1: peg gray
+                else peg @colors[@current[i]]
+                end
+            x.click do
+              @current[i] = @active
+              if @current.all? {|x| x != -1 } then
+                begin
+                  @game.guess! @current.map &:next
+                rescue RuntimeError => e
+                  alert e
+                end
+                @current = Array.new @game.pegs, -1
+                do_game_board
+              end
+              update_pending
+            end
+          end
+        end
+      end
+
+      def pending_guess
+        @pending = flow :width => Mastermind::GUIConstants::GUESS_WIDTH(@game.pegs)
+        update_pending
+      end
+
+      def empty_guess
+        flow do
+          @game.pegs.times do
+            peg gray, :stroke => false
+          end
+          flow :width => Mastermind::GUIConstants::HINT_WIDTH(@game.pegs),
+               :height => Mastermind::GUIConstants::GUESS_HEIGHT do
+            @game.pegs.times do
+              mini_peg gray, :stroke => false
+            end
+          end
+        end
+      end
+
+      def render_guess(g,h=nil)
+        flow do
+          @game.pegs.times do |i|
+            peg @colors[g[i]-1]
+          end
+          if h then
+            flow :width => Mastermind::GUIConstants::HINT_WIDTH(@game.pegs),
+                 :height => Mastermind::GUIConstants::GUESS_HEIGHT do
+              placed,colored = h
+              placed.times { mini_peg black }
+              colored.times { mini_peg white }
+              (@game.pegs - (placed + colored)).times do
+                mini_peg gray, :stroke => false
+              end
+            end
+          end
+        end
+      end
+
+      def do_guesses
+        @guesses.clear do
+          (@game.guess.zip @game.hints).each do |g,h|
+            render_guess g, h
+          end
+          pending_guess unless @game.guess.size == @game.guesses or @game.solved?
+          (@game.guesses - @game.guess.size - 1).times { empty_guess }
+          empty_guess if @game.solved?
+        end
+      end
+
+      def do_solution
+        @solution.clear do
+          width = Mastermind::GUIConstants::GUESS_WIDTH(@game.pegs)
+          height = Mastermind::GUIConstants::PEG_SIZE
+          fill gray
+          nostroke
+          rect :top => 0, :left => 0, :curve => 5,
+               :width => width, :height => height
+          stroke black
+          if @game.solved? then
+            render_guess @game.guess[-1]
+          end
+        end
+      end
+
       def do_game_board
         @game_board.clear do
-          para "bye"
+          @guesses = stack :height => Mastermind::GUIConstants::GUESS_HEIGHT * (@game.guesses) # FIXME
+          @solution = stack :height => Mastermind::GUIConstants::GUESS_HEIGHT
+
+          do_guesses
+          do_solution
         end
       end
 
