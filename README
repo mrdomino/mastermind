@@ -1,8 +1,19 @@
 Mastermind, written in Ruby, using Shoes.
 
-Provides 4 difficulty levels (3 serious, 1 joke), each of which spawns a
-new game of Mastermind with a random number. Within the GUI, we can
-click on colors to select them, and then click on circles in the current
-guess to make them the selected color. If we get the guess right, we
-win; otherwise, the game shows us what merits our guess has. We repeat
-until we run out of guesses or win.
+Provides 4 difficulty levels (3 serious, 1 joke), each of which
+spawns a new game of Mastermind with a random puzzle. Within
+the GUI, we can click on colors (or type numbers that they
+correspond to) to select them, and then click on circles in the
+current guess to make them the selected color. If we get the
+guess right, we win; otherwise, the game shows us what merits
+our guess has. We repeat until we run out of guesses or win.
+
+Obviously, this program requires Shoes. Get it at <http://shoooes.net/>.
+If Shoes is on your path, you can even run it from the command line:
+  $ mastermind
+
+The latest version of this code can be found at
+<http://squire.case.edu/git/mastermind.git/>.
+
+All code is copyright (c) 2009 Steven Dee, and
+is licensed under the terms provided in COPYING.
