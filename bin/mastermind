@@ -35,7 +35,7 @@ class MastermindGUI < Shoes
   url '/game/(\d+)/(\d+)/(\d+)', :game
 
   def index
-    background white
+    background rgb(225,225,225)..white
     stack do
       title "Mastermind", :underline => 'single'
       para sub("by ", em("Steven Dee")), :align => "right"
