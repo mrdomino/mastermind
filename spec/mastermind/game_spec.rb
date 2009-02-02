@@ -1,6 +1,6 @@
 require File.join(File.dirname(__FILE__), %w(.. spec_helper))
 
-require 'mastermind'
+require 'mastermind/game'
 
 describe Mastermind::Game do
 
