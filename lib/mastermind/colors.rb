@@ -3,7 +3,7 @@ module Mastermind
 class Colors
 
   def self.colors(n)
-    1.upto(n).collect do |i|
+    (1..n).collect do |i|
       hue2rgb (360.0*i/n)
     end
   end

@@ -54,7 +54,7 @@ class MastermindGUI < Shoes
   end
 
   def game(colors,pegs,guesses)
-    colors,pegs,guesses = [colors,pegs,guesses].map &:to_i
+    colors,pegs,guesses = [colors,pegs,guesses].map {|x| x.to_i }
     window :title => "Mastermind :: Game [#{colors},#{pegs},#{guesses}]",
            :height => Mastermind::GUIConstants.APP_HEIGHT(guesses,colors),
            :width =>  Mastermind::GUIConstants.APP_WIDTH(pegs),
@@ -67,13 +67,13 @@ class MastermindGUI < Shoes
       keypress do |k|
         if k == "0" then v = 10
         else v = k.to_i end
-        @active = v-1 if v.between? 1, @colors.size
+        @active = v-1 if v.between? 0, @colors.size
         do_color_panel
       end
 
       @game = Mastermind::Game.new :colors => colors, :pegs => pegs, :guesses => guesses
 
-      p @game.puzzle
+      puts @game.puzzle.inspect
       25.times { puts }
       puts "Scroll up for solution."
 
@@ -138,7 +138,7 @@ class MastermindGUI < Shoes
               @current[i] = @active
               if @current.all? {|x| x != -1 } then
                 begin
-                  @game.guess! @current.map &:next
+                  @game.guess! @current.map {|x| x.next }
                 rescue RuntimeError => e
                   alert e
                 end
