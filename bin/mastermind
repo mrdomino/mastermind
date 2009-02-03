@@ -239,4 +239,4 @@ class MastermindGUI < Shoes
 
 end
 
-Shoes.app :title => "Mastermind", :width => 250, :height => 275, :resizable => false
+Shoes.app :title => "Mastermind", :width => 250, :height => 300, :resizable => false
