@@ -44,11 +44,12 @@ class MastermindGUI < Shoes
       para sub(em "version ", Mastermind::VERSION, " by ", "Steven Dee"), :align => "right"
 
       para 'Begin a new game:'
-      [[:easy , [6,4,10]],
-       [:medium , [8,5,12]],
-       [:difficult , [10,6,14]],
-       [:trivial , [1,2,1]]].each do |d,p|
-        para link(d.to_s.capitalize, :click => "/game/#{p.join("/")}"), :align => 'center'
+      [[:easy,      [6,  4, 10]],
+       [:medium,    [8,  5, 12]],
+       [:difficult, [10, 6, 14]],
+       [:trivial,   [1,  2, 1]]].each do |d,p|
+        para link(d.to_s.capitalize, :click => "/game/#{p.join("/")}"),
+            :align => 'center'
       end
     end
   end
@@ -71,7 +72,9 @@ class MastermindGUI < Shoes
         do_color_panel
       end
 
-      @game = Mastermind::Game.new :colors => colors, :pegs => pegs, :guesses => guesses
+      @game = Mastermind::Game.new :colors  => colors,
+                                   :pegs    => pegs,
+                                   :guesses => guesses
 
       puts @game.puzzle.inspect
       25.times { puts }
