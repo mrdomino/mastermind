@@ -221,7 +221,7 @@ class MastermindGUI < Shoes
 
       def do_game_board
         @game_board.clear do
-          @guesses = stack :height => GUESS_HEIGHT * (@game.guesses) # FIXME
+          @guesses = stack :height => GUESS_HEIGHT * (@game.guesses)
           @solution = stack :height => GUESS_HEIGHT
 
           do_guesses
