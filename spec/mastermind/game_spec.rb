@@ -142,7 +142,8 @@ describe Mastermind::Game do
         @puzzles = [{:n => 0, :puzzle => [1,2,3,4], :guess => [5,6,5,6]},
                     {:n => 1, :puzzle => [1,2,3,4], :guess => [1,4,6,5]},
                     {:n => 0, :puzzle => [2,2,2,1], :guess => [2,2,2,2]},
-                    {:n => 3, :puzzle => [1,2,1,4], :guess => [5,1,2,1]}]
+                    {:n => 3, :puzzle => [1,2,1,4], :guess => [5,1,2,1]},
+                    {:n => 1, :puzzle => [1,2,2,1], :guess => [2,3,3,3]}]
         @um_hintfunc = Mastermind::Game.instance_method(:colors_correct)
       end
       it_should_behave_like "hints"

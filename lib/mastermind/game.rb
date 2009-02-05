@@ -55,7 +55,7 @@ class Game
       end
     end
     t1.zip(t2).inject(0) do |acc,x|
-      acc = acc + x[0] if x.all? {|z| z > 0}
+      acc = acc + x.min if x.all? {|z| z > 0}
       acc
     end
   end
