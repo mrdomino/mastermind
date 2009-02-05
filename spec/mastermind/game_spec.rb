@@ -98,10 +98,10 @@ describe Mastermind::Game do
       @mastermind.should_not be_solved
     end
     # an optimistic test
-    it "should not tell when the game is not lost" do
+    it "should not be lost with no guesses" do
       @mastermind.should_not be_lost
     end
-    it "should not be lost when it is solved" do
+    it "should not be lost when it is solved on the last guess" do
       9.times { @mastermind.guess! [1,2,3,4] }
       @mastermind.guess! @mastermind.puzzle
       @mastermind.should_not be_lost
