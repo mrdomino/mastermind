@@ -24,7 +24,6 @@ class Game
     validate p
     @guess << p
     @hints << [pegs_correct, colors_correct]
-    @solved = p == puzzle
   end
 
   def validate(p)
@@ -35,7 +34,7 @@ class Game
   end
 
   def solved?
-    @solved
+    @guess[-1] == @puzzle
   end
 
   def pegs_correct(n=-1)
