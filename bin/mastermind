@@ -7,7 +7,7 @@ $: << File.join(File.dirname(__FILE__), %w(.. lib))
 
 require 'mastermind'
 
-module Mastermind::GUIConstants
+module GUIConstants
   PEG_DIA = 40
   PEG_PAD = 6
   PEG_SIZE = PEG_DIA + (PEG_PAD*2)
@@ -35,8 +35,6 @@ end
 
 class MastermindGUI < Shoes
 
-  include Mastermind::GUIConstants
-
   url '/', :index
   url '/game/(\d+)/(\d+)/(\d+)', :game
 
@@ -61,8 +59,8 @@ class MastermindGUI < Shoes
   def game(colors,pegs,guesses)
     colors,pegs,guesses = [colors,pegs,guesses].map {|x| x.to_i }
     window :title => "Mastermind :: Game [#{colors},#{pegs},#{guesses}]",
-           :height => APP_HEIGHT(guesses,colors),
-           :width =>  APP_WIDTH(pegs),
+           :height => GUIConstants::APP_HEIGHT(guesses,colors),
+           :width =>  GUIConstants::APP_WIDTH(pegs),
            :resizable => false do
       background rgb(225,225,225)..white
 
@@ -108,14 +106,14 @@ class MastermindGUI < Shoes
       end
 
       def mini_peg(c,args = {})
-        sz = PEG_SIZE/2
-        gen_peg c, sz, sz, PEG_PAD/2, PEG_DIA/2,
+        sz = GUIConstants::PEG_SIZE/2
+        gen_peg c, sz, sz, GUIConstants::PEG_PAD/2, GUIConstants::PEG_DIA/2,
             args[:active], args[:stroke]
       end
 
       def peg(c,args = {})
-        sz = PEG_SIZE
-        gen_peg c, sz, sz, PEG_PAD, PEG_DIA,
+        sz = GUIConstants::PEG_SIZE
+        gen_peg c, sz, sz, GUIConstants::PEG_PAD, GUIConstants::PEG_DIA,
             args[:active], args[:stroke]
       end
 
@@ -157,7 +155,7 @@ class MastermindGUI < Shoes
       end
 
       def pending_guess
-        @pending = flow :width => GUESS_WIDTH(@game.pegs)
+        @pending = flow :width => GUIConstants::GUESS_WIDTH(@game.pegs)
         update_pending
       end
 
@@ -166,8 +164,8 @@ class MastermindGUI < Shoes
           @game.pegs.times do
             peg gray, :stroke => false
           end
-          flow :width => HINT_WIDTH(@game.pegs),
-               :height => GUESS_HEIGHT do
+          flow :width =>  GUIConstants::HINT_WIDTH(@game.pegs),
+               :height => GUIConstants::GUESS_HEIGHT do
             @game.pegs.times do
               mini_peg gray, :stroke => false
             end
@@ -181,8 +179,8 @@ class MastermindGUI < Shoes
             peg @colors[g[i]-1]
           end
           if h then
-            flow :width => HINT_WIDTH(@game.pegs),
-                 :height => GUESS_HEIGHT do
+            flow :width =>  GUIConstants::HINT_WIDTH(@game.pegs),
+                 :height => GUIConstants::GUESS_HEIGHT do
               placed,colored = h
               placed.times { mini_peg black }
               colored.times { mini_peg white }
@@ -207,8 +205,8 @@ class MastermindGUI < Shoes
 
       def do_solution
         @solution.clear do
-          width = GUESS_WIDTH(@game.pegs)
-          height = PEG_SIZE
+          width = GUIConstants::GUESS_WIDTH(@game.pegs)
+          height = GUIConstants::PEG_SIZE
           fill gray
           nostroke
           rect :top => 0, :left => 0, :curve => 5,
@@ -222,8 +220,8 @@ class MastermindGUI < Shoes
 
       def do_game_board
         @game_board.clear do
-          @guesses = stack :height => GUESS_HEIGHT * (@game.guesses)
-          @solution = stack :height => GUESS_HEIGHT
+          @guesses = stack :height => GUIConstants::GUESS_HEIGHT * (@game.guesses)
+          @solution = stack :height => GUIConstants::GUESS_HEIGHT
 
           do_guesses
           do_solution
@@ -232,8 +230,9 @@ class MastermindGUI < Shoes
 
       # Main layout.
       flow do
-        @color_panel = stack :width => CPAN_WIDTH, :margin => ELEM_PAD
-        @game_board = stack :width => -CPAN_WIDTH
+        @color_panel = stack :width  => GUIConstants::CPAN_WIDTH,
+                             :margin => GUIConstants::ELEM_PAD
+        @game_board = stack :width => -GUIConstants::CPAN_WIDTH
 
         render
       end
