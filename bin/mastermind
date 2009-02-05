@@ -64,7 +64,7 @@ class MastermindGUI < Shoes
            :resizable => false do
       background rgb(225,225,225)..white
 
-      @colors = Mastermind::Colors.colors(colors)
+      @colors = Mastermind::Colors.colors(colors).map {|x,y,z| rgb x,y,z }
       @active = -1
 
       keypress do |k|
