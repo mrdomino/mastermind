@@ -4,7 +4,12 @@ require 'mastermind/colors'
 
 describe Mastermind::Colors do
   before do
-    @colorss = [6,8,10].collect {|n| Mastermind::Colors.colors n }
+    @color_szs = [6,8,10]
+    @colorss = @color_szs.collect {|n| Mastermind::Colors.colors n }
+  end
+
+  it "should return a list of the specified length" do
+    @colorss.zip(@color_szs).each {|cs,sz| cs.size.should == sz }
   end
   it "should return a unique list of colors" do
     @colorss.each do |cs|
