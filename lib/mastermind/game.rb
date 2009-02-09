@@ -39,7 +39,7 @@ class Game
 
   def pegs_correct(n=-1)
     return puzzle.zip(guess[n]).inject(0) do |acc,i|
-      acc = acc + 1 if i[0] ==i[1]
+      acc = acc + 1 if i.reduce &:==
       acc
     end
   end
