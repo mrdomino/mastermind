@@ -1,5 +1,4 @@
 - confirm guesses before finalizing
-- spec the rest of the lib
 - refactor GUI into spec-able portions
   - spec them
 - click n drag?
