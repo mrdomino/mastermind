@@ -1,8 +1,3 @@
-#!/usr/bin/env shoes
-
-# vim: ft=ruby
-# -*- ruby -*-
-
 $: << File.join(File.dirname(__FILE__), %w(.. lib))
 
 require 'mastermind'
