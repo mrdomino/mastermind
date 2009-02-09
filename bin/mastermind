@@ -1,1 +1,248 @@
-mastermind.rb
+#!/usr/bin/env shoes
+
+# vim: ft=ruby
+# -*- ruby -*-
+
+$: << File.join(File.dirname(__FILE__), %w(.. lib))
+
+require 'mastermind'
+
+module GUIConstants
+  PEG_DIA = 40
+  PEG_PAD = 6
+  PEG_SIZE = PEG_DIA + (PEG_PAD*2)
+  ELEM_PAD = 8
+  CPAN_WIDTH = PEG_SIZE + (ELEM_PAD*2)
+
+  GUESS_HEIGHT = PEG_SIZE+ELEM_PAD
+
+  def self.GUESS_WIDTH(pegs)
+    PEG_SIZE*pegs
+  end
+
+  def self.HINT_WIDTH(pegs)
+    PEG_SIZE/4*(pegs+1)
+  end
+
+  def self.APP_HEIGHT(guesses,colors)
+    [colors*PEG_SIZE, (guesses+1)*GUESS_HEIGHT].max
+  end
+
+  def self.APP_WIDTH(pegs)
+    CPAN_WIDTH + GUESS_WIDTH(pegs) + HINT_WIDTH(pegs) + ELEM_PAD
+  end
+end
+
+class MastermindGUI < Shoes
+
+  url '/', :index
+  url '/game/(\d+)/(\d+)/(\d+)', :game
+
+  def index
+    background rgb(225,225,225)..white
+    stack do
+      title "Mastermind", :underline => 'single', :align => "center"
+      para sub(em "version ", Mastermind::VERSION, " by ", "Steven Dee"),
+          :align => "right"
+
+      para 'Begin a new game:'
+      [[:easy,      [6,  4, 10]],
+       [:medium,    [8,  5, 12]],
+       [:difficult, [10, 6, 14]],
+       [:trivial,   [1,  2, 1]]].each do |d,p|
+        para link(d.to_s.capitalize, :click => "/game/#{p.join("/")}"),
+            :align => 'center'
+      end
+    end
+  end
+
+  def game(colors,pegs,guesses)
+    colors,pegs,guesses = [colors,pegs,guesses].map {|x| x.to_i }
+    window :title => "Mastermind :: Game [#{colors},#{pegs},#{guesses}]",
+           :height => GUIConstants::APP_HEIGHT(guesses,colors),
+           :width =>  GUIConstants::APP_WIDTH(pegs),
+           :resizable => false do
+      background rgb(225,225,225)..white
+
+      @colors = Mastermind::Colors.colors(colors).map {|x,y,z| rgb x,y,z }
+      @active = -1
+
+      keypress do |k|
+        if k == "0" then v = 10
+        else v = k.to_i end
+        @active = v-1 if v.between? 1, @colors.size
+        do_color_panel
+      end
+
+      @game = Mastermind::Game.new :colors  => colors,
+                                   :pegs    => pegs,
+                                   :guesses => guesses
+
+      puts @game.puzzle.inspect
+      25.times { puts }
+      puts "Scroll up for solution."
+
+      @current = Array.new pegs, -1
+
+      # Overall rendering.
+      def render
+        do_color_panel
+        do_game_board
+      end
+
+      def gen_peg(c,width,height,pad,dia,active,stroke)
+        image(width,height) do
+          if active then
+            fill black
+            nostroke
+            rect :width => width, :height => height, :curve => pad
+          end
+          fill c
+          nostroke if stroke == false
+          oval :radius => dia/2,
+               :top => pad,
+               :left => pad
+        end
+      end
+
+      def mini_peg(c,args = {})
+        sz = GUIConstants::PEG_SIZE/2
+        gen_peg c, sz, sz, GUIConstants::PEG_PAD/2, GUIConstants::PEG_DIA/2,
+            args[:active], args[:stroke]
+      end
+
+      def peg(c,args = {})
+        sz = GUIConstants::PEG_SIZE
+        gen_peg c, sz, sz, GUIConstants::PEG_PAD, GUIConstants::PEG_DIA,
+            args[:active], args[:stroke]
+      end
+
+      def do_color_panel
+        @color_panel.clear do
+          @colors.each_with_index do |c,i|
+            x = peg c, :active => i == @active
+            x.click do
+              @active = i
+              do_color_panel
+            end
+          end
+        end
+      end
+
+      def update_pending
+        @pending.clear do
+          border red, :strokewidth => 3
+          @game.pegs.times do |i|
+            x = case @current[i]
+                when -1: peg gray
+                else peg @colors[@current[i]]
+                end
+            x.click do
+              @current[i] = @active
+              if @current.all? {|x| x != -1 } then
+                begin
+                  @game.guess! @current.map {|x| x.next }
+                rescue RuntimeError => e
+                  alert e
+                end
+                @current = Array.new @game.pegs, -1
+                do_game_board
+              end
+              update_pending
+            end
+          end
+        end
+      end
+
+      def pending_guess
+        @pending = flow :width => GUIConstants::GUESS_WIDTH(@game.pegs)
+        update_pending
+      end
+
+      def empty_guess
+        flow do
+          @game.pegs.times do
+            peg gray, :stroke => false
+          end
+          flow :width =>  GUIConstants::HINT_WIDTH(@game.pegs),
+               :height => GUIConstants::GUESS_HEIGHT do
+            @game.pegs.times do
+              mini_peg gray, :stroke => false
+            end
+          end
+        end
+      end
+
+      def render_guess(g,h=nil)
+        flow do
+          @game.pegs.times do |i|
+            peg @colors[g[i]-1]
+          end
+          if h then
+            flow :width =>  GUIConstants::HINT_WIDTH(@game.pegs),
+                 :height => GUIConstants::GUESS_HEIGHT do
+              placed,colored = h
+              placed.times { mini_peg black }
+              colored.times { mini_peg white }
+              (@game.pegs - (placed + colored)).times do
+                mini_peg gray, :stroke => false
+              end
+            end
+          end
+        end
+      end
+
+      def do_guesses
+        @guesses.clear do
+          (@game.guess.zip @game.hints).each do |g,h|
+            render_guess g, h
+          end
+          pending_guess unless @game.lost? or @game.solved?
+          (@game.guesses - @game.guess.size - 1).times { empty_guess }
+          empty_guess if @game.solved?
+        end
+      end
+
+      def do_solution
+        @solution.clear do
+          width = GUIConstants::GUESS_WIDTH(@game.pegs)
+          height = GUIConstants::PEG_SIZE
+          fill gray
+          nostroke
+          rect :top => 0, :left => 0, :curve => 5,
+               :width => width, :height => height
+          stroke black
+          if @game.solved? or @game.lost? then
+            render_guess @game.puzzle
+          end
+        end
+      end
+
+      def do_game_board
+        @game_board.clear do
+          @guesses = stack :height => GUIConstants::GUESS_HEIGHT * (@game.guesses)
+          @solution = stack :height => GUIConstants::GUESS_HEIGHT
+
+          do_guesses
+          do_solution
+        end
+      end
+
+      # Main layout.
+      flow do
+        @color_panel = stack :width  => GUIConstants::CPAN_WIDTH,
+                             :margin => GUIConstants::ELEM_PAD
+        @game_board = stack :width => -GUIConstants::CPAN_WIDTH
+
+        render
+      end
+    end
+    visit "/"
+  end
+
+end
+
+Shoes.app :title => "Mastermind",
+          :width => 250,
+          :height => 300,
+          :resizable => false
