@@ -26,13 +26,6 @@ class Game
     @hints << [pegs_correct, colors_correct]
   end
 
-  def validate(p)
-    p.size == pegs or raise "Solutions should be of size #{pegs}; received solution of size #{p.size}"
-    p.each do |i|
-      i.between? 1, colors or raise "#{i} is out of bounds; should be in [1,#{colors}]"
-    end
-  end
-
   def solved?
     @guess[-1] == @puzzle
   end
@@ -61,6 +54,15 @@ class Game
 
   def lost?
     guess.size == guesses and not solved?
+  end
+
+private
+
+  def validate(p)
+    p.size == pegs or raise "Solutions should be of size #{pegs}; received solution of size #{p.size}"
+    p.each do |i|
+      i.between? 1, colors or raise "#{i} is out of bounds; should be in [1,#{colors}]"
+    end
   end
 
 end
