@@ -5,6 +5,7 @@ class Game
   attr_reader :guess, :hints, :puzzle
 
   def initialize(args = {})
+    raise "Game with 0 colors doesn't make sense." if args[:colors] == 0
     @colors = args[:colors] || 6
     @pegs = args[:pegs] || 4
     @guesses = args[:guesses] || 10

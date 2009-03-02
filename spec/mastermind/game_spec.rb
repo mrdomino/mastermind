@@ -27,6 +27,9 @@ describe Mastermind::Game do
         @mastermind.guess! Array.new 4, @mastermind.colors + 1
       }.should raise_error
     end
+    it "should raise an error if asked for 0 colors" do
+      lambda { Mastermind::Game.new :colors => 0 }.should raise_error
+    end
   end
 
   describe "puzzle generation" do
